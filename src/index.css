@@ -1,0 +1,11 @@
+@import "tailwindcss";
+
+
+@theme {
+  --font-metamorphous: "Metamorphous", serif;
+  --font-righteous: "Righteous", sans-serif;
+  --font-roboto: "Roboto", sans-serif;
+  --font-saira: "Saira", sans-serif;
+  --font-zen: "Zen Dots", sans-serif;
+}
+@plugin "daisyui";
