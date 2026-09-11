@@ -13,7 +13,7 @@ const Chat = () => {
     const fetchProfile = async () => {
       try {
         const response = await axios.get(
-          "http://localhost:7777/profile",
+          "/profile",
           { withCredentials: true }
         );
 
@@ -31,7 +31,7 @@ const Chat = () => {
   const fetchMessages = async () => {
     try {
       const response = await axios.get(
-        `http://localhost:7777/messages/${petId}/${userId}`,
+        `/messages/${petId}/${userId}`,
         { withCredentials: true }
       );
 
@@ -82,7 +82,7 @@ const Chat = () => {
 
     try {
       const response = await axios.post(
-        "http://localhost:7777/messages",
+        "/messages",
         {
           receiver: userId,
           pet: petId,

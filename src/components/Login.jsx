@@ -25,7 +25,7 @@ const Login = () => {
 
   try {
     const response = await axios.post(
-      "http://localhost:7777/login",
+      "/login",
       formData,
       {
         withCredentials: true,

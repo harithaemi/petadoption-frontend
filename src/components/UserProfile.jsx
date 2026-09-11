@@ -19,7 +19,7 @@ const UserProfile = () => {
 
   const getUserProfile = async () => {
     const response = await axios.get(
-      "http://localhost:7777/adoption/profile",
+      "/adoption/profile",
       {
         withCredentials: true,
       }
@@ -32,7 +32,7 @@ const UserProfile = () => {
 
   const getAdoptionApplications = async () => {
     const response = await axios.get(
-      "http://localhost:7777/adoption/applications",
+      "/adoption/applications",
       {
         withCredentials: true,
       }
@@ -45,7 +45,7 @@ const UserProfile = () => {
 
   const getFosterApplications = async () => {
     const response = await axios.get(
-      "http://localhost:7777/adoption/foster/applications",
+      "/adoption/foster/applications",
       {
         withCredentials: true,
       }
@@ -94,7 +94,7 @@ const UserProfile = () => {
       setError("");
 
       const response = await axios.patch(
-        "http://localhost:7777/adoption/profile",
+        "/adoption/profile",
         {
           userName: user.userName,
           emailId: user.emailId,

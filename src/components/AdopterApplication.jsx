@@ -60,7 +60,7 @@ const AdopterApplication = () => {
 
     try {
       const response = await axios.post(
-        "http://localhost:7777/adoption/adoptionapplication",
+        "/adoption/adoptionapplication",
         {
           pet: id,
           fullName: formData.fullName,

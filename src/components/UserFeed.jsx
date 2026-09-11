@@ -11,7 +11,7 @@ const UserFeed = () => {
   const fetchPets = async () => {
     try {
       const response = await axios.get(
-        "http://localhost:7777/adoption/userfeed",
+        "/adoption/userfeed",
         { withCredentials: true }
       );
 

@@ -10,7 +10,7 @@ const Messages = () => {
   useEffect(() => {
     const fetchConversations = async () => {
       try {
-        const response = await axios.get("http://localhost:7777/messages", {
+        const response = await axios.get("/messages", {
           withCredentials: true,
         });
 

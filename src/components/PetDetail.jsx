@@ -15,7 +15,7 @@ const PetDetail = () => {
   const fetchPet = async () => {
     try {
       const response = await axios.get(
-        `http://localhost:7777/adoption/pet/${id}`,
+        `/adoption/pet/${id}`,
         { withCredentials: true }
       );
 
@@ -33,7 +33,7 @@ const PetDetail = () => {
   const fetchReviews = async () => {
     try {
       const response = await axios.get(
-        `http://localhost:7777/reviews/${id}`
+        `/reviews/${id}`
       );
 
       if (response.data.success) {
@@ -51,7 +51,7 @@ const PetDetail = () => {
 
     try {
       const response = await axios.post(
-        "http://localhost:7777/reviews",
+        "/reviews",
         {
           pet: id,
           rating,

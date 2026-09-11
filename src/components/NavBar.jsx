@@ -11,7 +11,7 @@ const NavBar = () => {
     const getProfile = async () => {
       try {
         const response = await axios.get(
-          "http://localhost:7777/profile",
+          "/profile",
           {
             withCredentials: true,
           }
@@ -40,7 +40,7 @@ const NavBar = () => {
   const handleLogout = async () => {
     try {
       await axios.post(
-        "http://localhost:7777/logout",
+        "/logout",
         {},
         {
           withCredentials: true,
@@ -68,8 +68,6 @@ const NavBar = () => {
   return (
     <div className="navbar bg-base-100 shadow justify-between z-50 fixed top-0 w-full">
 
-      {/* LOGO */}
-
       <Link
         to={
           user?.role === "shelter"
@@ -89,7 +87,6 @@ const NavBar = () => {
         </h1>
       </Link>
 
-      {/* USER MENU */}
 
       {user && (
 
@@ -112,23 +109,17 @@ const NavBar = () => {
             className="dropdown-content menu bg-base-100 rounded-box z-50 mt-3 w-52 p-2 shadow"
           >
 
-            {/* PROFILE */}
-
             <li>
               <Link to={profilePath}>
                 Profile
               </Link>
             </li>
 
-            {/* MESSAGES */}
-
             <li>
               <Link to="/messages">
                 Messages
               </Link>
             </li>
-
-            {/* LOGOUT */}
 
             <li>
               <button onClick={handleLogout}>

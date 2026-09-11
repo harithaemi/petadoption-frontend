@@ -49,7 +49,7 @@ const SignUp = () => {
       setLoading(true);
 
       const response = await axios.post(
-        "http://localhost:7777/signup",
+        "/signup",
         formData,
         {
           withCredentials: true,

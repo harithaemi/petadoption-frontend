@@ -50,7 +50,7 @@ const PetForm = () => {
       setLoading(true);
 
       const response = await axios.get(
-        "http://localhost:7777/shelter/feed",
+        "/shelter/feed",
         {
           withCredentials: true,
         }
@@ -124,7 +124,7 @@ const PetForm = () => {
 
       if (isEditMode) {
         response = await axios.patch(
-          `http://localhost:7777/shelter/pet/${id}`,
+          `/shelter/pet/${id}`,
           data,
           {
             withCredentials: true,
@@ -138,7 +138,7 @@ const PetForm = () => {
         }
 
         response = await axios.post(
-          "http://localhost:7777/shelter/pets",
+          "/shelter/pets",
           data,
           {
             withCredentials: true,

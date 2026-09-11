@@ -25,17 +25,17 @@ const ShelterProfile = () => {
         adoptionResponse,
         fosterResponse,
       ] = await Promise.all([
-        axios.get("http://localhost:7777/shelter/profile", {
+        axios.get("/shelter/profile", {
           withCredentials: true,
         }),
         axios.get(
-          "http://localhost:7777/shelter/applications/adoption",
+          "/shelter/applications/adoption",
           {
             withCredentials: true,
           }
         ),
         axios.get(
-          "http://localhost:7777/shelter/applications/foster",
+          "/shelter/applications/foster",
           {
             withCredentials: true,
           }
@@ -108,7 +108,7 @@ const ShelterProfile = () => {
   const handleUpdateProfile = async () => {
     try {
       const response = await axios.patch(
-        "http://localhost:7777/shelter/profile",
+        "/shelter/profile",
         formData,
         {
           withCredentials: true,
@@ -144,11 +144,11 @@ const ShelterProfile = () => {
       let url = "";
 
       if (type === "adoption") {
-        url = `http://localhost:7777/shelter/applications/adoption/${applicationId}/status`;
+        url = `/shelter/applications/adoption/${applicationId}/status`;
       }
 
       if (type === "foster") {
-        url = `http://localhost:7777/shelter/applications/foster/${applicationId}/status`;
+        url = `/shelter/applications/foster/${applicationId}/status`;
       }
 
       const response = await axios.patch(
