@@ -14,7 +14,7 @@ const Feed = () => {
       setLoading(true);
 
       const response = await axios.get(
-        "http://localhost:7777/shelter/feed",
+        "/shelter/feed",
         {
           withCredentials: true,
         }

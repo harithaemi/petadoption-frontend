@@ -48,7 +48,7 @@ const Chat = () => {
   }, [petId, userId]);
 
   useEffect(() => {
-    const socket = io("http://localhost:7777", {
+    const socket = io(import.meta.env.VITE_API_URL, {
       withCredentials: true,
     });
 
