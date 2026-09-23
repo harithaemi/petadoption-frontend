@@ -37,7 +37,7 @@ function App() {
 
           <Route path="shelter/profile"  element={<ShelterProfile />} />
 
-          <Route path="profile" element={<UserProfile />} />
+          <Route path="/adoption/profile" element={<UserProfile />} />
 
           <Route path="userfeed" element={<UserFeed />} />
 

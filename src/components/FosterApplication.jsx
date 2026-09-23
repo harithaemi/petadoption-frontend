@@ -83,7 +83,7 @@ const FosterApplication = () => {
         setMessage("Foster application submitted successfully");
 
         setTimeout(() => {
-          navigate("/userprofile");
+          navigate("/adoption/profile");
         }, 1000);
       }
     } catch (error) {
