@@ -11,6 +11,8 @@ const Login = () => {
     password: "",
   });
 
+  const [errors, setErrors] = useState({});
+
   const handleChange = (e) => {
     const { name, value } = e.target;
 
@@ -18,36 +20,84 @@ const Login = () => {
       ...prev,
       [name]: value,
     }));
+
+    setErrors((prev) => ({
+      ...prev,
+      [name]: "",
+    }));
   };
 
- const handleSubmit = async (e) => {
-  e.preventDefault();
+  const handleSubmit = async (e) => {
+    e.preventDefault();
 
-  try {
-    const response = await axios.post(
-      "/login",
-      formData,
-      {
-        withCredentials: true,
-      }
-    );
+    const newErrors = {};
 
-    console.log("Login response:", response.data);
-
-    const role = response.data.user.role;
-
-    if (role === "adopter") {
-      navigate("/userfeed");
-    } else if (role === "shelter") {
-      navigate("/feed");
+    if (!formData.emailId.trim()) {
+      newErrors.emailId = "Email is required";
     }
-  } catch (error) {
-    console.log(
-      "Login error:",
-      error.response?.data || error.message
-    );
-  }
-};
+
+    if (!formData.password) {
+      newErrors.password = "Password is required";
+    }
+
+    if (Object.keys(newErrors).length > 0) {
+      setErrors(newErrors);
+      return;
+    }
+
+    try {
+      const response = await axios.post(
+        "/login",
+        formData,
+        {
+          withCredentials: true,
+        }
+      );
+
+      console.log("Login response:", response.data);
+
+      const role = response.data.user.role;
+
+      if (role === "adopter") {
+        navigate("/userfeed");
+      } else if (role === "shelter") {
+        navigate("/feed");
+      }
+    } catch (error) {
+      console.log(
+        "Login error:",
+        error.response?.data || error.message
+      );
+
+      const message =
+        error.response?.data?.message ||
+        error.response?.data ||
+        "Invalid credentials";
+
+      if (
+        message.toLowerCase().includes("email") ||
+        message.toLowerCase().includes("user")
+      ) {
+        setErrors((prev) => ({
+          ...prev,
+          emailId: message,
+        }));
+      } else if (
+        message.toLowerCase().includes("password") ||
+        message.toLowerCase().includes("credential")
+      ) {
+        setErrors((prev) => ({
+          ...prev,
+          password: message,
+        }));
+      } else {
+        setErrors((prev) => ({
+          ...prev,
+          password: message,
+        }));
+      }
+    }
+  };
 
   return (
     <div className="min-h-screen flex items-center justify-center bg-gray-100 px-4">
@@ -65,8 +115,20 @@ const Login = () => {
           value={formData.emailId}
           onChange={handleChange}
           placeholder="Email"
-          className="p-3 border border-gray-300 rounded-md mb-4 bg-white"
+          className={`p-3 border rounded-md bg-white outline-none focus:ring-1 ${
+            errors.emailId
+              ? "border-red-500 focus:border-red-500 focus:ring-red-500"
+              : "border-gray-300 focus:border-red-500 focus:ring-red-500"
+          }`}
         />
+
+        {errors.emailId && (
+          <p className="text-red-500 text-sm mt-1 mb-3">
+            {errors.emailId}
+          </p>
+        )}
+
+        {!errors.emailId && <div className="mb-4" />}
 
         <input
           type="password"
@@ -74,8 +136,20 @@ const Login = () => {
           value={formData.password}
           onChange={handleChange}
           placeholder="Password"
-          className="p-3 border border-gray-300 rounded-md mb-4 bg-white"
+          className={`p-3 border rounded-md bg-white outline-none focus:ring-1 ${
+            errors.password
+              ? "border-red-500 focus:border-red-500 focus:ring-red-500"
+              : "border-gray-300 focus:border-red-500 focus:ring-red-500"
+          }`}
         />
+
+        {errors.password && (
+          <p className="text-red-500 text-sm mt-1 mb-3">
+            {errors.password}
+          </p>
+        )}
+
+        {!errors.password && <div className="mb-4" />}
 
         <button
           type="submit"
@@ -96,7 +170,3 @@ const Login = () => {
 };
 
 export default Login;
-
-
-
-
