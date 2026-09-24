@@ -13,7 +13,7 @@ const SignUp = () => {
     role: "",
   });
 
-  const [error, setError] = useState("");
+  const [errors, setErrors] = useState({});
   const [success, setSuccess] = useState("");
   const [loading, setLoading] = useState(false);
 
@@ -25,42 +25,46 @@ const SignUp = () => {
       [name]: value,
     }));
 
-    setError("");
+    setErrors((prev) => ({
+      ...prev,
+      [name]: "",
+    }));
+  };
+
+  const validateForm = () => {
+    const newErrors = {};
+
+    if (!formData.userName.trim()) {
+      newErrors.userName = "Username is required";
+    }
+
+    if (!formData.emailId.trim()) {
+      newErrors.emailId = "Email is required";
+    } else if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(formData.emailId)) {
+      newErrors.emailId = "Email is not valid";
+    }
+
+    if (!formData.password) {
+      newErrors.password = "Password is required";
+    } else if (formData.password.length < 6) {
+      newErrors.password = "Please enter a stronger password";
+    }
+
+    if (!formData.role) {
+      newErrors.role = "Account type is required";
+    }
+
+    setErrors(newErrors);
+
+    return Object.keys(newErrors).length === 0;
   };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
 
-    setError("");
     setSuccess("");
 
-    if (!formData.userName.trim()) {
-      setError("Please enter your username.");
-      return;
-    }
-
-    if (!formData.emailId.trim()) {
-      setError("Please enter your email address.");
-      return;
-    }
-
-    if (!formData.emailId.includes("@")) {
-      setError("Please enter a valid email address.");
-      return;
-    }
-
-    if (!formData.password) {
-      setError("Please enter your password.");
-      return;
-    }
-
-    if (formData.password.length < 6) {
-      setError("Password must be at least 6 characters.");
-      return;
-    }
-
-    if (!formData.role) {
-      setError("Please select your role.");
+    if (!validateForm()) {
       return;
     }
 
@@ -82,16 +86,40 @@ const SignUp = () => {
         role: "",
       });
 
+      setErrors({});
+
       setTimeout(() => {
         navigate("/login");
       }, 1000);
     } catch (error) {
-  console.log("Signup error:", error.response?.data);
-  setError(
-    error.response?.data?.message ||
-      "Registration failed. Please try again."
-  );
-}
+      console.log("Signup error:", error.response?.data);
+
+      const message = error.response?.data || "Registration failed";
+
+      if (message.toLowerCase().includes("username")) {
+        setErrors((prev) => ({
+          ...prev,
+          userName: message.replace("error saving the user", "").trim(),
+        }));
+      } else if (message.toLowerCase().includes("email")) {
+        setErrors((prev) => ({
+          ...prev,
+          emailId: message.replace("error saving the user", "").trim(),
+        }));
+      } else if (message.toLowerCase().includes("password")) {
+        setErrors((prev) => ({
+          ...prev,
+          password: message.replace("error saving the user", "").trim(),
+        }));
+      } else {
+        setErrors((prev) => ({
+          ...prev,
+          userName: message.replace("error saving the user", "").trim(),
+        }));
+      }
+    } finally {
+      setLoading(false);
+    }
   };
 
   return (
@@ -123,8 +151,16 @@ const SignUp = () => {
             value={formData.userName}
             onChange={handleChange}
             placeholder="Enter your username"
-            className="w-full p-3 border border-gray-300 rounded-md bg-white text-gray-800 placeholder-gray-400 outline-none focus:border-red-500 focus:ring-1 focus:ring-red-500"
+            className={`w-full p-3 border rounded-md bg-white text-gray-800 placeholder-gray-400 outline-none focus:ring-1 ${
+              errors.userName
+                ? "border-red-500 focus:border-red-500 focus:ring-red-500"
+                : "border-gray-300 focus:border-red-500 focus:ring-red-500"
+            }`}
           />
+
+          {errors.userName && (
+            <p className="text-red-500 text-sm mt-1">{errors.userName}</p>
+          )}
         </div>
 
         <div className="mb-5">
@@ -142,8 +178,16 @@ const SignUp = () => {
             value={formData.emailId}
             onChange={handleChange}
             placeholder="Enter your email address"
-            className="w-full p-3 border border-gray-300 rounded-md bg-white text-gray-800 placeholder-gray-400 outline-none focus:border-red-500 focus:ring-1 focus:ring-red-500"
+            className={`w-full p-3 border rounded-md bg-white text-gray-800 placeholder-gray-400 outline-none focus:ring-1 ${
+              errors.emailId
+                ? "border-red-500 focus:border-red-500 focus:ring-red-500"
+                : "border-gray-300 focus:border-red-500 focus:ring-red-500"
+            }`}
           />
+
+          {errors.emailId && (
+            <p className="text-red-500 text-sm mt-1">{errors.emailId}</p>
+          )}
         </div>
 
         <div className="mb-5">
@@ -161,12 +205,20 @@ const SignUp = () => {
             value={formData.password}
             onChange={handleChange}
             placeholder="Enter your password"
-            className="w-full p-3 border border-gray-300 rounded-md bg-white text-gray-800 placeholder-gray-400 outline-none focus:border-red-500 focus:ring-1 focus:ring-red-500"
+            className={`w-full p-3 border rounded-md bg-white text-gray-800 placeholder-gray-400 outline-none focus:ring-1 ${
+              errors.password
+                ? "border-red-500 focus:border-red-500 focus:ring-red-500"
+                : "border-gray-300 focus:border-red-500 focus:ring-red-500"
+            }`}
           />
 
-          <p className="text-xs text-gray-500 mt-1">
-            Password must be at least 6 characters.
-          </p>
+          {errors.password ? (
+            <p className="text-red-500 text-sm mt-1">{errors.password}</p>
+          ) : (
+            <p className="text-xs text-gray-500 mt-1">
+              Use a strong password with at least 6 characters.
+            </p>
+          )}
         </div>
 
         <div className="mb-6">
@@ -182,7 +234,11 @@ const SignUp = () => {
             name="role"
             value={formData.role}
             onChange={handleChange}
-            className="w-full p-3 border border-gray-300 rounded-md bg-white text-gray-800 outline-none focus:border-red-500 focus:ring-1 focus:ring-red-500"
+            className={`w-full p-3 border rounded-md bg-white text-gray-800 outline-none focus:ring-1 ${
+              errors.role
+                ? "border-red-500 focus:border-red-500 focus:ring-red-500"
+                : "border-gray-300 focus:border-red-500 focus:ring-red-500"
+            }`}
           >
             <option value="" disabled>
               Select your account type
@@ -190,13 +246,11 @@ const SignUp = () => {
             <option value="adopter">Adopter</option>
             <option value="shelter">Shelter</option>
           </select>
-        </div>
 
-        {error && (
-          <div className="bg-red-50 border border-red-200 text-red-600 text-sm rounded-md p-3 mb-5">
-            {error}
-          </div>
-        )}
+          {errors.role && (
+            <p className="text-red-500 text-sm mt-1">{errors.role}</p>
+          )}
+        </div>
 
         {success && (
           <div className="bg-green-50 border border-green-200 text-green-600 text-sm rounded-md p-3 mb-5">
@@ -227,4 +281,3 @@ const SignUp = () => {
 };
 
 export default SignUp;
-
