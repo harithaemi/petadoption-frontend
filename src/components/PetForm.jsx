@@ -10,7 +10,7 @@ const PetForm = () => {
 
   const [loading, setLoading] = useState(false);
   const [images, setImages] = useState([]);
-
+const [videos, setVideos] = useState([]);
   const [formData, setFormData] = useState({
     petName: "",
     gender: "",
@@ -34,16 +34,32 @@ const PetForm = () => {
     }));
   };
 
-  const handleImageChange = (e) => {
-    const selectedImages = Array.from(e.target.files);
+ const handleImageChange = (e) => {
+  const files = Array.from(e.target.files);
 
-    if (selectedImages.length > 5) {
-      alert("You can upload a maximum of 5 images");
-      return;
-    }
+  if (files.length > 5) {
+    alert("You can upload a maximum of 5 files");
+    e.target.value = "";
+    return;
+  }
 
-    setImages(selectedImages);
-  };
+  const selectedImages = files.filter((file) =>
+    file.type.startsWith("image/")
+  );
+
+  const selectedVideos = files.filter((file) =>
+    file.type.startsWith("video/")
+  );
+
+  if (selectedImages.length + selectedVideos.length !== files.length) {
+    alert("Please select valid image or video files");
+    e.target.value = "";
+    return;
+  }
+
+  setImages(selectedImages);
+  setVideos(selectedVideos);
+};
 
   const getPet = async () => {
     try {
@@ -116,9 +132,13 @@ const PetForm = () => {
       data.append("city", formData.city);
       data.append("about", formData.about);
 
-      images.forEach((image) => {
-        data.append("images", image);
-      });
+images.forEach((image) => {
+  data.append("images", image);
+});
+
+videos.forEach((video) => {
+  data.append("images", video);
+});
 
       let response;
 
@@ -131,11 +151,11 @@ const PetForm = () => {
           }
         );
       } else {
-        if (images.length === 0) {
-          alert("Please select at least one image");
-          setLoading(false);
-          return;
-        }
+    if (images.length === 0 && videos.length === 0) {
+  alert("Please select at least one image or video");
+  setLoading(false);
+  return;
+}
 
         response = await axios.post(
           "/shelter/pets",
@@ -337,37 +357,45 @@ const PetForm = () => {
               />
             </div>
 
-            <div className="w-full px-2">
-              <label className="text-red-500 text-sm">
-                Upload Pictures
-              </label>
+          
+<div className="w-full px-2">
+  <label className="text-red-500 text-sm">
+    Upload Pet Images and Videos
+  </label>
 
-              <input
-                type="file"
-                accept="image/*"
-                multiple
-                onChange={handleImageChange}
-                className="border-red-100 p-2 rounded-lg border-2 w-full"
-                required={!isEditMode}
-              />
+  <input
+    type="file"
+    name="images"
+    accept="image/jpeg,image/png,image/webp,video/mp4,video/webm,video/quicktime"
+    multiple
+    onChange={handleImageChange}
+    className="border p-2 rounded-lg w-full mt-2"
+  />
 
-              <p className="text-gray-500 text-sm mt-1">
-                You can upload up to 5 images
-              </p>
+  <p className="text-gray-500 text-sm mt-1">
+    Upload up to 5 images and videos combined. Maximum 50 MB per file.
+  </p>
 
-              {images.length > 0 && (
-                <div className="flex flex-wrap gap-3 mt-4">
-                  {images.map((image, index) => (
-                    <img
-                      key={index}
-                      src={URL.createObjectURL(image)}
-                      alt={`Pet ${index + 1}`}
-                      className="w-24 h-24 object-cover rounded-lg border"
-                    />
-                  ))}
-                </div>
-              )}
-            </div>
+  <div className="flex flex-wrap gap-3 mt-4">
+    {images.map((image, index) => (
+      <img
+        key={`image-${index}`}
+        src={URL.createObjectURL(image)}
+        alt={`Pet ${index + 1}`}
+        className="w-24 h-24 object-cover rounded-lg border"
+      />
+    ))}
+
+    {videos.map((video, index) => (
+      <video
+        key={`video-${index}`}
+        src={URL.createObjectURL(video)}
+        controls
+        className="w-40 h-24 object-cover rounded-lg border"
+      />
+    ))}
+  </div>
+</div>
 
             <div className="w-full px-2 mt-4 flex justify-center">
               <button
