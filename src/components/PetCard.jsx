@@ -63,7 +63,7 @@ const PetCard = ({ pet, isAdopter = false }) => {
               {pet.location || "N/A"}
             </p>
 
-            <p className="break-words">
+            <p className="wrap-break-words">
               <span className="font-semibold">About:</span>{" "}
               {pet.about || "N/A"}
             </p>
