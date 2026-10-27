@@ -36,7 +36,7 @@ const Messages = () => {
   }
 
   return (
-    <div className="min-h-screen bg-gray-50 pt-24 px-6">
+    <div className="min-h-screen bg-red-100 pt-24 px-6">
       <div className="max-w-4xl mx-auto">
         <h1 className="text-3xl font-bold font-saira mb-6">Messages</h1>
 

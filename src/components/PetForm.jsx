@@ -346,13 +346,13 @@ videos.forEach((video) => {
             </div>
 
             <div className="w-full px-2">
-              <label className="text-red-500 text-sm">About</label>
+              <label className="text-red-500 text-sm">Medical history</label>
               <textarea
                 name="about"
                 value={formData.about}
                 onChange={handleChange}
                 rows="3"
-                placeholder="Tell us about the pet..."
+                placeholder="please enter medical history and size and color of the pet .."
                 className="border-red-100 p-2 rounded-lg border-2 w-full resize-none"
               />
             </div>

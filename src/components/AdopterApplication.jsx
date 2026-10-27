@@ -97,7 +97,7 @@ const AdopterApplication = () => {
   };
 
   return (
-    <div className="min-h-screen bg-gray-100 py-16 px-4">
+    <div className="min-h-screen bg-red-100 py-16 px-4">
       <Link to="/userfeed">
         <button
           type="button"

@@ -17,9 +17,11 @@ const PetCard = ({ pet, isAdopter = false }) => {
           />
         </figure>
 
-        <div className="card-body items-center text-center">
+        <div className="card-body items-start text-center">
           <h2 className="card-title text-2xl">No pets available</h2>
-          <p className="text-gray-500">No pets available right now.</p>
+          <p className="text-gray-500">
+            No pets available right now.
+          </p>
         </div>
       </div>
     );
@@ -35,24 +37,60 @@ const PetCard = ({ pet, isAdopter = false }) => {
         />
       </figure>
 
-      <div className="card-body items-center text-center">
-        <h2 className="card-title text-2xl">{pet.petName}</h2>
+      <div className="card-body items-start">
+        <div className="flex items-center gap-3 flex-wrap">
+          <h2 className="card-title text-2xl">
+            {pet.petName}
+          </h2>
 
-        <p>
-          {pet.gender}
-          {pet.age && (
-            <>
-              , <span>{pet.age}</span>
-            </>
+          {pet.ratingCount > 0 && (
+            <div className="flex items-center gap-1 text-yellow-500 font-semibold">
+              <span>★</span>
+              <span>
+                {Number(pet.ratingAverage || 0).toFixed(1)}
+              </span>
+              <span className="text-gray-500 text-sm">
+                ({pet.ratingCount})
+              </span>
+            </div>
           )}
-        </p>
+        </div>
 
-        <p>{pet.breed}</p>
-        <p>{pet.location}</p>
-        <p>{pet.about}</p>
+        <div className="flex w-full gap-4 mt-3">
+          <div className="flex-1 min-w-0 space-y-3">
+            <p>
+              <span className="font-semibold">Location:</span>{" "}
+              {pet.location || "N/A"}
+            </p>
 
-        <div className="w-full">
-          <p className="text-xl font-semibold mb-2">Contact Details</p>
+            <p className="break-words">
+              <span className="font-semibold">About:</span>{" "}
+              {pet.about || "N/A"}
+            </p>
+          </div>
+
+          <div className="flex-1 min-w-0 space-y-3">
+            <p>
+              <span className="font-semibold">Gender:</span>{" "}
+              {pet.gender || "N/A"}
+            </p>
+
+            <p>
+              <span className="font-semibold">Age:</span>{" "}
+              {pet.age ?? "N/A"}
+            </p>
+
+            <p>
+              <span className="font-semibold">Breed:</span>{" "}
+              {pet.breed || "N/A"}
+            </p>
+          </div>
+        </div>
+
+        <div className="w-full mt-4">
+          <p className="text-xl font-semibold mb-2">
+            Contact Details
+          </p>
 
           <p>
             <span className="font-semibold">Name:</span>{" "}
@@ -64,7 +102,7 @@ const PetCard = ({ pet, isAdopter = false }) => {
             {pet.contactNumber || pet.shelter?.phoneNumber || "N/A"}
           </p>
 
-          <p>
+          <p className="break-all">
             <span className="font-semibold">Email:</span>{" "}
             {pet.ownerEmail || pet.shelter?.emailId || "N/A"}
           </p>
@@ -111,6 +149,3 @@ const PetCard = ({ pet, isAdopter = false }) => {
 };
 
 export default PetCard;
-
-
-

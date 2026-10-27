@@ -40,7 +40,7 @@ const Feed = () => {
   }, [location.key]);
 
   return (
-    <div className="min-h-screen pt-24 px-6 pb-10">
+    <div className="min-h-screen pt-24 px-6 pb-10 bg-red-100">
 
       <div className="flex justify-center mb-8">
         <Link

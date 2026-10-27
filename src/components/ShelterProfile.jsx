@@ -207,7 +207,7 @@ const ShelterProfile = () => {
   }
 
   return (
-    <div className="min-h-screen bg-gray-50 pt-24 px-6 pb-16">
+    <div className="min-h-screen bg-red-100 pt-24 px-6 pb-16">
       <div className="max-w-6xl mx-auto">
         <div className="bg-white rounded-xl shadow-md p-6 mb-10">
           <div className="flex justify-between items-center mb-6">

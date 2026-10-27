@@ -162,7 +162,7 @@ const UserProfile = () => {
   }
 
   return (
-    <div className="min-h-screen pt-24 px-6 pb-12 bg-gray-100">
+    <div className="min-h-screen pt-24 px-6 pb-12 bg-red-100">
       <Link to="/userfeed">
         <button
           type="button"

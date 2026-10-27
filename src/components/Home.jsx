@@ -4,7 +4,7 @@ import { Link } from 'react-router-dom'
 
 const Home = () => {
   return (
- <div className="relative h-screen w-full overflow-hidden">
+ <div className="relative h-screen w-full overflow-hidden ">
 
   <img
     src={dogbg}

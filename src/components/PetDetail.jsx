@@ -115,47 +115,81 @@ const PetDetail = () => {
         </h2>
       </div>
 
+
 <div className="flex justify-center mt-8">
   <div className="carousel w-full max-w-3xl rounded-xl">
-    {(pet.images?.length ? pet.images : pet.image ? [pet.image] : []).map(
-      (image, index, images) => (
-        <div
-          key={index}
-          id={`slide${index}`}
-          className="carousel-item relative w-full"
-        >
+    {[
+      ...(pet.images?.length
+        ? pet.images
+        : pet.image
+        ? [pet.image]
+        : []
+      ).map((url) => ({
+        url,
+        type: "image",
+      })),
+
+      ...(pet.videos || []).map((url) => ({
+        url,
+        type: "video",
+      })),
+    ].map((media, index, allMedia) => (
+      <div
+        key={index}
+        id={`slide${index}`}
+        className="carousel-item relative w-full"
+      >
+        {media.type === "image" ? (
           <img
-            src={image}
+            src={media.url}
             className="w-full h-80 md:h-113 object-cover"
             alt={`${pet.petName} ${index + 1}`}
           />
+        ) : (
+          <video
+            src={media.url}
+            controls
+            preload="metadata"
+            className="w-full h-80 md:h-113 object-contain bg-black"
+          >
+            Your browser does not support video.
+          </video>
+        )}
 
-          {images.length > 1 && (
-            <>
-              <a
-                href={`#slide${index === 0 ? images.length - 1 : index - 1}`}
-                className="absolute left-5 top-1/2 -translate-y-1/2 btn btn-circle"
-              >
-                ❮
-              </a>
+        {allMedia.length > 1 && (
+          <>
+            <a
+              href={`#slide${
+                index === 0
+                  ? allMedia.length - 1
+                  : index - 1
+              }`}
+              className="absolute left-5 top-1/2 -translate-y-1/2 btn btn-circle"
+            >
+              ❮
+            </a>
 
-              <a
-                href={`#slide${index === images.length - 1 ? 0 : index + 1}`}
-                className="absolute right-5 top-1/2 -translate-y-1/2 btn btn-circle"
-              >
-                ❯
-              </a>
-            </>
-          )}
-        </div>
-      )
-    )}
+            <a
+              href={`#slide${
+                index === allMedia.length - 1
+                  ? 0
+                  : index + 1
+              }`}
+              className="absolute right-5 top-1/2 -translate-y-1/2 btn btn-circle"
+            >
+              ❯
+            </a>
+          </>
+        )}
+      </div>
+    ))}
   </div>
 </div>
 
+
       <div className="max-w-4xl mx-auto mt-12">
         <h2 className="text-3xl text-red-500 font-righteous mb-4">
-          My Personality
+         Medical History And color
         </h2>
 
         <p className="font-saira text-lg leading-8">

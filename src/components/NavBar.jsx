@@ -1,21 +1,20 @@
+
 import React, { useEffect, useState } from "react";
 import axios from "axios";
 import Dog from "../assets/dog.png";
-import { Link, useNavigate } from "react-router-dom";
+import { Link, useNavigate, useLocation } from "react-router-dom";
 
 const NavBar = () => {
   const [user, setUser] = useState(null);
   const navigate = useNavigate();
+  const location = useLocation();
 
   useEffect(() => {
     const getProfile = async () => {
       try {
-        const response = await axios.get(
-          "/profile",
-          {
-            withCredentials: true,
-          }
-        );
+        const response = await axios.get("/profile", {
+          withCredentials: true,
+        });
 
         console.log("Navbar profile:", response.data);
 
@@ -35,7 +34,7 @@ const NavBar = () => {
     };
 
     getProfile();
-  }, []);
+  }, [location.pathname]);
 
   const handleLogout = async () => {
     try {
@@ -48,7 +47,6 @@ const NavBar = () => {
       );
 
       setUser(null);
-
       navigate("/login");
     } catch (error) {
       console.error(
@@ -67,7 +65,6 @@ const NavBar = () => {
 
   return (
     <div className="navbar bg-base-100 shadow justify-between z-50 fixed top-0 w-full">
-
       <Link
         to={
           user?.role === "shelter"
@@ -87,20 +84,15 @@ const NavBar = () => {
         </h1>
       </Link>
 
-
       {user && (
-
         <div className="dropdown dropdown-end mr-4">
-
           <div
             tabIndex={0}
             role="button"
             className="p-2 shadow rounded-full bg-red-600 w-10 h-10 cursor-pointer flex items-center justify-center"
           >
             <h1 className="text-white font-semibold">
-              {user.userName
-                ?.charAt(0)
-                .toUpperCase()}
+              {user.userName?.charAt(0).toUpperCase()}
             </h1>
           </div>
 
@@ -108,7 +100,6 @@ const NavBar = () => {
             tabIndex={0}
             className="dropdown-content menu bg-base-100 rounded-box z-50 mt-3 w-52 p-2 shadow"
           >
-
             <li>
               <Link to={profilePath}>
                 Profile
@@ -126,13 +117,9 @@ const NavBar = () => {
                 Logout
               </button>
             </li>
-
           </ul>
-
         </div>
-
       )}
-
     </div>
   );
 };
