@@ -1,16 +1,58 @@
-# React + Vite
+# Pet Adoption Platform – Frontend
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+A React-based Pet Adoption Platform that helps users find pets for adoption or fostering.
 
-Currently, two official plugins are available:
+## Tech Stack
+- React.js
+- Vite
+- Tailwind CSS and DaisyUI
+- Axios
+- React Router
+- Socket.IO Client
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Oxc](https://oxc.rs)
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/)
+## Features
+- Shelter and adopter accounts
+- Browse and search pets
+- Apply for adoption or fostering
+- Track application status
+- Meet & Greet scheduling
+- Real-time chat
+- Pet reviews and ratings
+- Responsive design
 
-## React Compiler
+## Installation
 
-The React Compiler is not enabled on this template because of its impact on dev & build performances. To add it, see [this documentation](https://react.dev/learn/react-compiler/installation).
+```bash
+npm install
+npm run dev
+```
+# Pet Adoption Platform – Backend
 
-## Expanding the ESLint configuration
+Backend API for a MERN stack Pet Adoption Platform that connects animal shelters with people looking to adopt or foster pets.
 
-If you are developing a production application, we recommend using TypeScript with type-aware lint rules enabled. Check out the [TS template](https://github.com/vitejs/vite/tree/main/packages/create-vite/template-react-ts) for information on how to integrate TypeScript and [`typescript-eslint`](https://typescript-eslint.io) in your project.
+## Tech Stack
+- Node.js
+- Express.js
+- MongoDB and Mongoose
+- JWT Authentication
+- Socket.IO
+- Cloudinary and Multer
+- Resend (Email Notifications)
+
+## Features
+- Shelter and adopter authentication
+- Pet management (Add, Edit, Delete)
+- Adoption and foster applications
+- Application approval and rejection
+- Meet & Greet scheduling
+- Real-time messaging
+- Email notifications
+- Reviews and ratings
+- Protected API routes
+
+
+## Live Links
+
+Frontend: https://petloverapp.netlify.app/
+
+Backend: https://petadoption-backend-wtz9.onrender.com/
