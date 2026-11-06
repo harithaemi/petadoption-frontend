@@ -17,6 +17,14 @@ const SignUp = () => {
   const [success, setSuccess] = useState("");
   const [loading, setLoading] = useState(false);
 
+  const passwordChecks = {
+    length: formData.password.length >= 6,
+    uppercase: /[A-Z]/.test(formData.password),
+    lowercase: /[a-z]/.test(formData.password),
+    number: /[0-9]/.test(formData.password),
+    special: /[^A-Za-z0-9]/.test(formData.password),
+  };
+
   const handleChange = (e) => {
     const { name, value } = e.target;
 
@@ -41,17 +49,17 @@ const SignUp = () => {
     if (!formData.emailId.trim()) {
       newErrors.emailId = "Email is required";
     } else if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(formData.emailId)) {
-      newErrors.emailId = "Email is not valid";
+      newErrors.emailId = "Please enter a valid email address";
     }
 
     if (!formData.password) {
       newErrors.password = "Password is required";
-    } else if (formData.password.length < 6) {
-      newErrors.password = "Please enter a stronger password";
+    } else if (!Object.values(passwordChecks).every(Boolean)) {
+      newErrors.password = "Please meet all password requirements";
     }
 
     if (!formData.role) {
-      newErrors.role = "Account type is required";
+      newErrors.role = "Please select an account type";
     }
 
     setErrors(newErrors);
@@ -61,7 +69,6 @@ const SignUp = () => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-
     setSuccess("");
 
     if (!validateForm()) {
@@ -71,11 +78,9 @@ const SignUp = () => {
     try {
       setLoading(true);
 
-      const response = await axios.post("/signup", formData, {
+      await axios.post("/signup", formData, {
         withCredentials: true,
       });
-
-      console.log("Signup response:", response.data);
 
       setSuccess("Registration successful! Redirecting to login...");
 
@@ -94,36 +99,46 @@ const SignUp = () => {
     } catch (error) {
       console.log("Signup error:", error.response?.data);
 
-      const message = error.response?.data || "Registration failed";
+      const responseData = error.response?.data;
 
-      if (message.toLowerCase().includes("username")) {
-        setErrors((prev) => ({
-          ...prev,
-          userName: message.replace("error saving the user", "").trim(),
-        }));
-      } else if (message.toLowerCase().includes("email")) {
-        setErrors((prev) => ({
-          ...prev,
-          emailId: message.replace("error saving the user", "").trim(),
-        }));
-      } else if (message.toLowerCase().includes("password")) {
-        setErrors((prev) => ({
-          ...prev,
-          password: message.replace("error saving the user", "").trim(),
-        }));
+      const message =
+        typeof responseData === "string"
+          ? responseData
+          : responseData?.message || "Registration failed. Please try again.";
+
+      const lowerMessage = message.toLowerCase();
+
+      if (lowerMessage.includes("username")) {
+        setErrors({ userName: message });
+      } else if (lowerMessage.includes("email")) {
+        setErrors({ emailId: message });
+      } else if (lowerMessage.includes("password")) {
+        setErrors({ password: message });
       } else {
-        setErrors((prev) => ({
-          ...prev,
-          userName: message.replace("error saving the user", "").trim(),
-        }));
+        setErrors({ form: message });
       }
     } finally {
       setLoading(false);
     }
   };
 
+  const inputStyle =
+    "w-full p-3 border border-gray-300 rounded-md bg-white text-gray-900 placeholder:text-gray-500 caret-red-600 outline-none focus:border-red-500 focus:ring-1 focus:ring-red-500";
+
+  const errorStyle = "text-red-600 text-sm mt-1";
+
+  const Requirement = ({ valid, children }) => (
+    <p className={`text-xs flex items-center gap-2 ${
+      valid ? "text-green-600" : "text-gray-500"
+    }`}>
+      <span>{valid ? "✓" : "○"}</span>
+      {children}
+    </p>
+  );
+
   return (
-    <div className="min-h-screen flex items-center justify-center bg-gray-100 px-4 py-10">
+  <div className="min-h-screen flex items-center mt-12 justify-center bg-gray-100 px-4 py-8">
+
       <form
         onSubmit={handleSubmit}
         className="w-full max-w-md border border-gray-200 shadow-xl rounded-xl p-8 bg-white"
@@ -132,15 +147,13 @@ const SignUp = () => {
           Create Account
         </h1>
 
-        <p className="text-gray-500 text-center mb-8">
+        <p className="text-gray-600 text-center mb-8">
           Join our pet adoption community
         </p>
 
+     
         <div className="mb-5">
-          <label
-            htmlFor="userName"
-            className="block text-gray-700 font-medium mb-2"
-          >
+          <label htmlFor="userName" className="block text-gray-800 font-medium mb-2">
             Username
           </label>
 
@@ -151,23 +164,17 @@ const SignUp = () => {
             value={formData.userName}
             onChange={handleChange}
             placeholder="Enter your username"
-            className={`w-full p-3 border rounded-md bg-white text-gray-800 placeholder-gray-400 outline-none focus:ring-1 ${
-              errors.userName
-                ? "border-red-500 focus:border-red-500 focus:ring-red-500"
-                : "border-gray-300 focus:border-red-500 focus:ring-red-500"
-            }`}
+            className={inputStyle}
           />
 
           {errors.userName && (
-            <p className="text-red-500 text-sm mt-1">{errors.userName}</p>
+            <p className={errorStyle}>{errors.userName}</p>
           )}
         </div>
 
+       
         <div className="mb-5">
-          <label
-            htmlFor="emailId"
-            className="block text-gray-700 font-medium mb-2"
-          >
+          <label htmlFor="emailId" className="block text-gray-800 font-medium mb-2">
             Email Address
           </label>
 
@@ -178,23 +185,17 @@ const SignUp = () => {
             value={formData.emailId}
             onChange={handleChange}
             placeholder="Enter your email address"
-            className={`w-full p-3 border rounded-md bg-white text-gray-800 placeholder-gray-400 outline-none focus:ring-1 ${
-              errors.emailId
-                ? "border-red-500 focus:border-red-500 focus:ring-red-500"
-                : "border-gray-300 focus:border-red-500 focus:ring-red-500"
-            }`}
+            className={inputStyle}
           />
 
           {errors.emailId && (
-            <p className="text-red-500 text-sm mt-1">{errors.emailId}</p>
+            <p className={errorStyle}>{errors.emailId}</p>
           )}
         </div>
 
+     
         <div className="mb-5">
-          <label
-            htmlFor="password"
-            className="block text-gray-700 font-medium mb-2"
-          >
+          <label htmlFor="password" className="block text-gray-800 font-medium mb-2">
             Password
           </label>
 
@@ -205,27 +206,45 @@ const SignUp = () => {
             value={formData.password}
             onChange={handleChange}
             placeholder="Enter your password"
-            className={`w-full p-3 border rounded-md bg-white text-gray-800 placeholder-gray-400 outline-none focus:ring-1 ${
-              errors.password
-                ? "border-red-500 focus:border-red-500 focus:ring-red-500"
-                : "border-gray-300 focus:border-red-500 focus:ring-red-500"
-            }`}
+            className={inputStyle}
           />
 
-          {errors.password ? (
-            <p className="text-red-500 text-sm mt-1">{errors.password}</p>
-          ) : (
-            <p className="text-xs text-gray-500 mt-1">
-              Use a strong password with at least 6 characters.
-            </p>
+          {errors.password && (
+            <p className={errorStyle}>{errors.password}</p>
           )}
+
+          <div className="mt-3 p-3 bg-gray-50 rounded-md border border-gray-200">
+            <p className="text-gray-800 text-sm font-medium mb-2">
+              Password must contain:
+            </p>
+
+            <div className="grid grid-cols-2 gap-2">
+              <Requirement valid={passwordChecks.length}>
+                At least 6 characters
+              </Requirement>
+
+              <Requirement valid={passwordChecks.uppercase}>
+                Uppercase letter (A-Z)
+              </Requirement>
+
+              <Requirement valid={passwordChecks.lowercase}>
+                Lowercase letter (a-z)
+              </Requirement>
+
+              <Requirement valid={passwordChecks.number}>
+                Number (0-9)
+              </Requirement>
+
+              <Requirement valid={passwordChecks.special}>
+                Special character (@, #, !)
+              </Requirement>
+            </div>
+          </div>
         </div>
 
+    
         <div className="mb-6">
-          <label
-            htmlFor="role"
-            className="block text-gray-700 font-medium mb-2"
-          >
+          <label htmlFor="role" className="block text-gray-800 font-medium mb-2">
             Account Type
           </label>
 
@@ -234,24 +253,29 @@ const SignUp = () => {
             name="role"
             value={formData.role}
             onChange={handleChange}
-            className={`w-full p-3 border rounded-md bg-white text-gray-800 outline-none focus:ring-1 ${
-              errors.role
-                ? "border-red-500 focus:border-red-500 focus:ring-red-500"
-                : "border-gray-300 focus:border-red-500 focus:ring-red-500"
-            }`}
+            className={inputStyle}
           >
             <option value="" disabled>
               Select your account type
             </option>
+
             <option value="adopter">Adopter</option>
             <option value="shelter">Shelter</option>
           </select>
 
           {errors.role && (
-            <p className="text-red-500 text-sm mt-1">{errors.role}</p>
+            <p className={errorStyle}>{errors.role}</p>
           )}
         </div>
 
+      
+        {errors.form && (
+          <div className="bg-red-50 border border-red-200 text-red-600 text-sm rounded-md p-3 mb-5">
+            {errors.form}
+          </div>
+        )}
+
+     
         {success && (
           <div className="bg-green-50 border border-green-200 text-green-600 text-sm rounded-md p-3 mb-5">
             {success}
@@ -266,7 +290,7 @@ const SignUp = () => {
           {loading ? "Creating Account..." : "Create Account"}
         </button>
 
-        <p className="text-center text-gray-600 mt-6">
+        <p className="text-center text-gray-700 mt-6">
           Already have an account?{" "}
           <Link
             to="/login"
@@ -275,6 +299,7 @@ const SignUp = () => {
             Login
           </Link>
         </p>
+
       </form>
     </div>
   );

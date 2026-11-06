@@ -12,6 +12,7 @@ const Login = () => {
   });
 
   const [errors, setErrors] = useState({});
+  const [loading, setLoading] = useState(false);
 
   const handleChange = (e) => {
     const { name, value } = e.target;
@@ -24,6 +25,7 @@ const Login = () => {
     setErrors((prev) => ({
       ...prev,
       [name]: "",
+      form: "",
     }));
   };
 
@@ -34,6 +36,10 @@ const Login = () => {
 
     if (!formData.emailId.trim()) {
       newErrors.emailId = "Email is required";
+    } else if (
+      !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(formData.emailId)
+    ) {
+      newErrors.emailId = "Please enter a valid email address";
     }
 
     if (!formData.password) {
@@ -46,6 +52,9 @@ const Login = () => {
     }
 
     try {
+      setLoading(true);
+      setErrors({});
+
       const response = await axios.post(
         "/login",
         formData,
@@ -56,12 +65,16 @@ const Login = () => {
 
       console.log("Login response:", response.data);
 
-      const role = response.data.user.role;
+      const role = response.data.user?.role;
 
       if (role === "adopter") {
         navigate("/userfeed");
       } else if (role === "shelter") {
         navigate("/feed");
+      } else {
+        setErrors({
+          form: "Unable to identify your account type. Please contact support.",
+        });
       }
     } catch (error) {
       console.log(
@@ -69,101 +82,108 @@ const Login = () => {
         error.response?.data || error.message
       );
 
-      const message =
-        error.response?.data?.message ||
-        error.response?.data ||
-        "Invalid credentials";
-
-      if (
-        message.toLowerCase().includes("email") ||
-        message.toLowerCase().includes("user")
-      ) {
-        setErrors((prev) => ({
-          ...prev,
-          emailId: message,
-        }));
-      } else if (
-        message.toLowerCase().includes("password") ||
-        message.toLowerCase().includes("credential")
-      ) {
-        setErrors((prev) => ({
-          ...prev,
-          password: message,
-        }));
-      } else {
-        setErrors((prev) => ({
-          ...prev,
-          password: message,
-        }));
-      }
+      setErrors({
+        form: "Invalid email or password. Please check your credentials and try again.",
+      });
+    } finally {
+      setLoading(false);
     }
   };
 
+  const inputStyle =
+    "w-full p-3 border border-gray-300 rounded-md bg-white text-gray-900 placeholder:text-gray-500 caret-red-600 outline-none focus:border-red-500 focus:ring-1 focus:ring-red-500";
+
   return (
-    <div className="min-h-screen flex items-center justify-center bg-gray-100 px-4">
+    <div className="min-h-screen flex items-center justify-center bg-gray-100 px-4 py-10">
+
       <form
         onSubmit={handleSubmit}
-        className="w-full max-w-md flex flex-col border-2 border-red-500 shadow-lg rounded-lg p-6 bg-white"
+        className="w-full max-w-md border border-gray-200 shadow-xl rounded-xl p-8 bg-white"
       >
-        <h1 className="text-4xl font-righteous font-medium text-red-600 text-center mb-6">
-          Login
+        <h1 className="text-4xl font-righteous font-medium text-red-600 text-center mb-2">
+          Welcome Back
         </h1>
 
-        <input
-          type="email"
-          name="emailId"
-          value={formData.emailId}
-          onChange={handleChange}
-          placeholder="Email"
-          className={`p-3 border rounded-md bg-white outline-none focus:ring-1 ${
-            errors.emailId
-              ? "border-red-500 focus:border-red-500 focus:ring-red-500"
-              : "border-gray-300 focus:border-red-500 focus:ring-red-500"
-          }`}
-        />
+        <p className="text-gray-600 text-center mb-8">
+          Login to your PetLover account
+        </p>
 
-        {errors.emailId && (
-          <p className="text-red-500 text-sm mt-1 mb-3">
-            {errors.emailId}
-          </p>
+        <div className="mb-5">
+          <label
+            htmlFor="emailId"
+            className="block text-gray-800 font-medium mb-2"
+          >
+            Email Address
+          </label>
+
+          <input
+            id="emailId"
+            type="email"
+            name="emailId"
+            value={formData.emailId}
+            onChange={handleChange}
+            placeholder="Enter your email address"
+            className={inputStyle}
+          />
+
+          {errors.emailId && (
+            <p className="text-red-600 text-sm mt-1">
+              {errors.emailId}
+            </p>
+          )}
+        </div>
+
+        <div className="mb-5">
+          <label
+            htmlFor="password"
+            className="block text-gray-800 font-medium mb-2"
+          >
+            Password
+          </label>
+
+          <input
+            id="password"
+            type="password"
+            name="password"
+            value={formData.password}
+            onChange={handleChange}
+            placeholder="Enter your password"
+            className={inputStyle}
+          />
+
+          {errors.password && (
+            <p className="text-red-600 text-sm mt-1">
+              {errors.password}
+            </p>
+          )}
+        </div>
+
+   
+        {errors.form && (
+          <div className="bg-red-50 border border-red-200 text-red-600 text-sm rounded-md p-3 mb-5">
+            {errors.form}
+          </div>
         )}
 
-        {!errors.emailId && <div className="mb-4" />}
-
-        <input
-          type="password"
-          name="password"
-          value={formData.password}
-          onChange={handleChange}
-          placeholder="Password"
-          className={`p-3 border rounded-md bg-white outline-none focus:ring-1 ${
-            errors.password
-              ? "border-red-500 focus:border-red-500 focus:ring-red-500"
-              : "border-gray-300 focus:border-red-500 focus:ring-red-500"
-          }`}
-        />
-
-        {errors.password && (
-          <p className="text-red-500 text-sm mt-1 mb-3">
-            {errors.password}
-          </p>
-        )}
-
-        {!errors.password && <div className="mb-4" />}
-
+     
         <button
           type="submit"
-          className="w-full bg-red-600 text-white py-3 rounded-md font-semibold hover:bg-red-500 transition"
+          disabled={loading}
+          className="w-full bg-red-600 text-white py-3 rounded-md font-semibold hover:bg-red-500 transition disabled:opacity-50 disabled:cursor-not-allowed"
         >
-          Login
+          {loading ? "Logging in..." : "Login"}
         </button>
 
-        <p className="m-2">
+        <p className="text-center text-gray-700 mt-6">
           New user?{" "}
-          <span className="text-red-600">
-            <Link to="/signup">SignUp</Link>
-          </span>
+          <Link
+            to="/signup"
+            className="text-red-600 font-medium hover:text-red-500"
+          >
+            Sign Up
+          </Link>
         </p>
+
       </form>
     </div>
   );
